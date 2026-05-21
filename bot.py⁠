@@ -1,0 +1,25 @@
+import os
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+
+# Securely reads your token from Render's settings later
+TOKEN = os.environ.get("TELEGRAM_TOKEN")
+
+def start_command(update: Update, context: CallbackContext):
+    update.message.reply_text("Hello! I am running 24/7 in the cloud!")
+
+def handle_message(update: Update, context: CallbackContext):
+    text_received = update.message.text
+    update.message.reply_text(f"Echo: {text_received}")
+
+if __name__ == "__main__":
+    print("Starting bot...")
+    updater = Updater(TOKEN, use_context=True)
+    dp = updater.dispatcher
+
+    dp.add_handler(CommandHandler("start", start_command))
+    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
+
+    updater.start_polling()
+    print("Bot is alive 24/7!")
+    updater.idle()
